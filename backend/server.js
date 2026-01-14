@@ -182,6 +182,30 @@ app.post('/api/intentions/:intentionId/close', (req, res) => {
   }
 });
 
+// Delete/withdraw intention
+app.delete('/api/intentions/:intentionId', (req, res) => {
+  try {
+    const intention = db.get('SELECT * FROM intentions WHERE id = ?', [req.params.intentionId]);
+    if (!intention) {
+      return res.status(404).json({ error: 'Intention not found' });
+    }
+
+    if (intention.status !== 'active') {
+      return res.status(400).json({ error: 'Can only withdraw active intentions' });
+    }
+
+    // Delete associated offers first
+    db.run('DELETE FROM offers WHERE intention_id = ?', [req.params.intentionId]);
+
+    // Delete intention
+    db.run('DELETE FROM intentions WHERE id = ?', [req.params.intentionId]);
+
+    res.json({ message: 'Intention withdrawn successfully' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 const PORT = 3000;
 
 // Initialize database before starting server

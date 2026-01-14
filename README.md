@@ -1,151 +1,176 @@
-<<<<<<< HEAD
-# Bedwars
-=======
 # Hotel Marketplace MVP
 
-A minimal reverse hotel marketplace where users create travel intentions and hotels make competing offers.
+Un marketplace inverso de hoteles donde los usuarios crean intenciones de viaje y los hoteles hacen ofertas competitivas.
 
-## Features
+## Características
 
-### User Mode
-- Create travel intentions with city, dates, and max price
-- View all offers from hotels
-- Select and accept an offer (closes the intention)
+### Modo Usuario
+- Crear intenciones de viaje con ciudad, fechas y precio máximo
+- Ver todas las ofertas de los hoteles en tiempo real
+- Seleccionar y aceptar una oferta (cierra la intención)
+- **Retirar intenciones activas** cuando sea necesario
 
-### Hotel Mode
-- View active intentions in hotel's city
-- Create one offer per intention
-- Update offers up to 2 times
-- Pricing constraints enforced (above min price, below max price)
+### Modo Hotel
+- Ver intenciones activas en la ciudad del hotel
+- Crear una oferta por intención
+- Actualizar ofertas hasta 2 veces
+- **Seleccionar servicios adicionales mediante checkboxes**
+- Restricciones de precios aplicadas (por encima del precio mínimo, por debajo del precio máximo)
 
-## Tech Stack
+## Stack Tecnológico
 
 - Backend: Node.js + Express
-- Database: SQLite with better-sqlite3
-- Frontend: HTML + Vanilla JavaScript
-- No authentication (simple role switching)
+- Database: SQLite con sql.js (sin compilación necesaria)
+- Frontend: HTML + JavaScript Vanilla con diseño moderno
+- Sin autenticación (cambio simple de roles)
 
-## Installation
+## Instalación
 
-1. Install dependencies:
+1. Instalar dependencias:
 ```bash
 npm install
 ```
 
-## Running the Application
+## Ejecutar la Aplicación
 
-1. Start the server:
+1. Iniciar el servidor:
 ```bash
 npm start
 ```
 
-2. Open your browser and navigate to:
+2. Abrir el navegador y navegar a:
 ```
 http://localhost:3000
 ```
 
-3. The database will be created automatically on first run with seed data.
+3. La base de datos se creará automáticamente con datos de prueba.
 
-## Seed Data
+## Datos de Prueba
 
-The application comes with pre-populated data:
+La aplicación viene con datos pre-cargados:
 
-**Users:**
+**Usuarios:**
 - John Doe
 - Jane Smith
 
-**Hotels:**
-- Grand Hotel (Paris, min price: $100)
-- Luxury Inn (Paris, min price: $150)
-- Budget Stay (London, min price: $80)
-- City Center Hotel (London, min price: $120)
+**Hoteles:**
+- Grand Hotel (París, precio mín: $100)
+- Luxury Inn (París, precio mín: $150)
+- Budget Stay (Londres, precio mín: $80)
+- City Center Hotel (Londres, precio mín: $120)
 
-## Usage
+## Uso
 
-### Creating an Intention (User Mode)
+### Crear una Intención (Modo Usuario)
 
-1. Select "User Mode" from the home page
-2. Choose a user from the dropdown
-3. Fill in the form:
-   - City (e.g., Paris)
-   - Check-in date
-   - Check-out date
-   - Maximum price you're willing to pay
-4. Click "Create Intention"
-5. Your intention will appear below with any offers hotels make
+1. Seleccionar "Modo Usuario" desde la página principal
+2. Elegir un usuario del menú desplegable
+3. Completar el formulario:
+   - Ciudad (ej. París)
+   - Fecha de check-in
+   - Fecha de check-out
+   - Precio máximo que estás dispuesto a pagar
+4. Clic en "Crear Intención"
+5. Tu intención aparecerá abajo con las ofertas que hagan los hoteles
 
-### Making an Offer (Hotel Mode)
+### Retirar una Intención (Modo Usuario)
 
-1. Select "Hotel Mode" from the home page
-2. Choose a hotel from the dropdown
-3. View active intentions in your city
-4. Click "Make Offer" on an intention
-5. Enter price (must be >= hotel's min price and <= intention's max price)
-6. Optionally add extras (e.g., "Free breakfast")
-7. Submit the offer
+1. En Modo Usuario, visualiza tus intenciones activas
+2. Clic en el botón "Retirar Intención" en la intención que desees eliminar
+3. Confirmar la acción
+4. La intención y todas sus ofertas asociadas se eliminarán permanentemente
 
-### Updating an Offer (Hotel Mode)
+### Hacer una Oferta (Modo Hotel)
 
-- Each hotel can update their offer up to 2 times
-- Click "Update Offer" on an existing offer
-- Change the price and/or extras
-- Submit the update
+1. Seleccionar "Modo Hotel" desde la página principal
+2. Elegir un hotel del menú desplegable
+3. Ver intenciones activas en tu ciudad
+4. Clic en "Hacer Oferta" en una intención
+5. Ingresar precio (debe ser >= precio mínimo del hotel y <= precio máximo de la intención)
+6. **Seleccionar servicios adicionales** de las opciones disponibles:
+   - Desayuno incluido
+   - WiFi gratis
+   - Estacionamiento
+   - Piscina
+   - Gimnasio
+   - Spa
+   - Traslado aeropuerto
+   - Servicio a habitación
+7. Enviar la oferta
 
-### Accepting an Offer (User Mode)
+### Actualizar una Oferta (Modo Hotel)
 
-1. In User Mode, view your intentions
-2. Click "Select This Offer" on your preferred offer
-3. Confirm the selection
-4. The intention will be marked as "closed"
-5. No more offers can be made on closed intentions
+- Cada hotel puede actualizar su oferta hasta 2 veces
+- Clic en "Actualizar Oferta" en una oferta existente
+- Cambiar el precio y/o los servicios seleccionados
+- Guardar la actualización
 
-## Business Rules
+### Aceptar una Oferta (Modo Usuario)
 
-- Hotels can only see intentions in their city
-- Hotels can only make one offer per intention
-- Offer price must be >= hotel's minimum price
-- Offer price must be <= intention's maximum price
-- Hotels can update offers max 2 times
-- Closed intentions cannot receive new offers
-- City matching is case-sensitive
+1. En Modo Usuario, ver tus intenciones
+2. Clic en "Seleccionar Oferta" en tu oferta preferida
+3. Confirmar la selección
+4. La intención se marcará como "cerrada"
+5. No se pueden hacer más ofertas en intenciones cerradas
 
-## API Endpoints
+## Reglas de Negocio
 
-### Users & Hotels
-- `GET /api/users` - Get all users
-- `GET /api/hotels` - Get all hotels
+- Los hoteles solo pueden ver intenciones en su ciudad
+- Los hoteles solo pueden hacer una oferta por intención
+- El precio de la oferta debe ser >= precio mínimo del hotel
+- El precio de la oferta debe ser <= precio máximo de la intención
+- Los hoteles pueden actualizar ofertas máximo 2 veces
+- Las intenciones cerradas no pueden recibir nuevas ofertas
+- Las intenciones activas pueden ser retiradas por el usuario
+- La coincidencia de ciudad es sensible a mayúsculas
 
-### Intentions
-- `POST /api/intentions` - Create intention
-- `GET /api/intentions/user/:userId` - Get user's intentions
-- `GET /api/intentions/city/:city` - Get intentions by city
-- `POST /api/intentions/:intentionId/close` - Close intention
+## Endpoints de la API
 
-### Offers
-- `GET /api/intentions/:intentionId/offers` - Get offers for intention
-- `POST /api/offers` - Create offer
-- `PUT /api/offers/:offerId` - Update offer
+### Usuarios y Hoteles
+- `GET /api/users` - Obtener todos los usuarios
+- `GET /api/hotels` - Obtener todos los hoteles
 
-## Project Structure
+### Intenciones
+- `POST /api/intentions` - Crear intención
+- `GET /api/intentions/user/:userId` - Obtener intenciones del usuario
+- `GET /api/intentions/city/:city` - Obtener intenciones por ciudad
+- `POST /api/intentions/:intentionId/close` - Cerrar intención
+- `DELETE /api/intentions/:intentionId` - Retirar/eliminar intención
+
+### Ofertas
+- `GET /api/intentions/:intentionId/offers` - Obtener ofertas para una intención
+- `POST /api/offers` - Crear oferta
+- `PUT /api/offers/:offerId` - Actualizar oferta
+
+## Estructura del Proyecto
 
 ```
 MVP/
 ├── backend/
-│   ├── server.js       # Express server and API endpoints
-│   └── db.js           # Database setup and seed data
+│   ├── server.js       # Servidor Express y endpoints API
+│   └── db.js           # Configuración de base de datos y datos de prueba
 ├── frontend/
-│   ├── index.html      # Home page with mode selection
-│   ├── user.html       # User mode interface
-│   └── hotel.html      # Hotel mode interface
+│   ├── index.html      # Página principal con selección de modo
+│   ├── user.html       # Interfaz de modo usuario
+│   └── hotel.html      # Interfaz de modo hotel
 ├── package.json
 └── README.md
 ```
 
-## Notes
+## Mejoras de la Interfaz
 
-- This is an MVP - no production security measures
-- No real authentication (role switching only)
-- SQLite database file is created in the root directory
-- All prices are in USD
-- Dates are stored as strings (YYYY-MM-DD format)
->>>>>>> 61d6e4e (First commit of Bedwars MVP)
+- Diseño moderno con gradientes y animaciones
+- Interfaz completamente en español
+- Checkboxes para seleccionar servicios adicionales
+- Diseño responsivo para móviles
+- Iconos para mejor visualización
+- Mensajes de error y éxito con estilo
+- Transiciones suaves en botones y tarjetas
+
+## Notas
+
+- Este es un MVP - sin medidas de seguridad para producción
+- Sin autenticación real (solo cambio de roles)
+- Archivo de base de datos SQLite creado en el directorio raíz
+- Todos los precios están en USD
+- Las fechas se almacenan como strings (formato YYYY-MM-DD)

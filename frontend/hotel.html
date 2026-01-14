@@ -1,123 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hotel Mode</title>
+  <title>Modo Hotel</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 20px auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      min-height: 100vh;
       padding: 20px;
     }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
-    .form-group {
-      margin-bottom: 15px;
+
+    h1 {
+      color: #f5576c;
+      font-size: 2rem;
     }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
+
+    .btn {
+      padding: 12px 24px;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    button.secondary {
-      background-color: #6c757d;
-    }
-    button.secondary:hover {
-      background-color: #5a6268;
-    }
-    .section {
-      margin-bottom: 40px;
-      padding: 20px;
-      border: 1px solid #ddd;
       border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
     }
-    .hotel-info {
-      background-color: #e7f3ff;
-      padding: 15px;
-      border-radius: 4px;
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(245,87,108,0.4);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .section {
+      background: white;
+      padding: 30px;
+      margin-bottom: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      color: #f5576c;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .form-group {
       margin-bottom: 20px;
     }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #f5576c;
+    }
+
+    .hotel-info {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .hotel-info h3 {
+      color: #333;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .hotel-info p {
+      color: #555;
+      margin: 5px 0;
+    }
+
     .intention-card {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 4px;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      border-left: 5px solid #f5576c;
     }
+
     .intention-card h3 {
-      margin-top: 0;
+      color: #333;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
     }
-    .offer-form {
-      background-color: #f8f9fa;
-      padding: 15px;
-      margin-top: 10px;
-      border-radius: 4px;
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+      color: #555;
     }
+
     .existing-offer {
-      background-color: #fff3cd;
-      padding: 15px;
-      margin-top: 10px;
-      border-radius: 4px;
-      border-left: 3px solid #ffc107;
+      background: #fff3cd;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #ffc107;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
-    .success {
-      color: green;
-      margin-top: 10px;
-    }
-    .warning {
+
+    .existing-offer h4 {
       color: #856404;
-      background-color: #fff3cd;
-      padding: 10px;
-      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .offer-form {
+      background: white;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .offer-form h4 {
+      color: #f5576c;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
       margin-top: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .checkbox-item:hover {
+      background: #e9ecef;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid #ffeaa7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .checkbox-group {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Mode</h1>
-    <button onclick="location.href='index.html'">Back</button>
-  </header>
+  <div class="container">
+    <header>
+      <h1>🏨 Modo Hotel</h1>
+      <button class="btn btn-secondary" onclick="location.href='index.html'">← Volver</button>
+    </header>
 
-  <div class="section">
-    <h2>Select Hotel</h2>
-    <select id="hotelId" onchange="loadHotelInfo()">
-      <option value="">Loading...</option>
-    </select>
-    <div id="hotelInfo"></div>
-  </div>
+    <div class="section">
+      <h2>🏢 Seleccionar Hotel</h2>
+      <select id="hotelId" onchange="loadHotelInfo()">
+        <option value="">Cargando...</option>
+      </select>
+      <div id="hotelInfo"></div>
+    </div>
 
-  <div class="section">
-    <h2>Active Intentions in Your City</h2>
-    <button onclick="loadIntentions()">Refresh</button>
-    <div id="intentions"></div>
+    <div class="section">
+      <h2>📋 Intenciones Activas en Tu Ciudad</h2>
+      <button class="btn btn-primary" onclick="loadIntentions()">🔄 Actualizar</button>
+      <div id="intentions"></div>
+    </div>
   </div>
 
   <script>
@@ -125,7 +279,17 @@
     let currentHotel = null;
     let intentionsWithOffers = {};
 
-    // Load hotels on page load
+    const AVAILABLE_EXTRAS = [
+      { id: 'breakfast', label: 'Desayuno incluido' },
+      { id: 'wifi', label: 'WiFi gratis' },
+      { id: 'parking', label: 'Estacionamiento' },
+      { id: 'pool', label: 'Piscina' },
+      { id: 'gym', label: 'Gimnasio' },
+      { id: 'spa', label: 'Spa' },
+      { id: 'shuttle', label: 'Traslado aeropuerto' },
+      { id: 'room-service', label: 'Servicio a habitación' }
+    ];
+
     async function loadHotels() {
       try {
         const response = await fetch(`${API_URL}/hotels`);
@@ -140,7 +304,6 @@
       }
     }
 
-    // Load hotel info
     async function loadHotelInfo() {
       const hotelId = document.getElementById('hotelId').value;
       if (!hotelId) return;
@@ -153,9 +316,9 @@
         if (currentHotel) {
           document.getElementById('hotelInfo').innerHTML = `
             <div class="hotel-info">
-              <h3>${currentHotel.name}</h3>
-              <p><strong>City:</strong> ${currentHotel.city}</p>
-              <p><strong>Minimum Price:</strong> $${currentHotel.min_price}</p>
+              <h3>🏨 ${currentHotel.name}</h3>
+              <p><strong>📍 Ciudad:</strong> ${currentHotel.city}</p>
+              <p><strong>💰 Precio Mínimo:</strong> $${currentHotel.min_price}</p>
             </div>
           `;
           loadIntentions();
@@ -165,7 +328,6 @@
       }
     }
 
-    // Load intentions for hotel's city
     async function loadIntentions() {
       if (!currentHotel) return;
 
@@ -175,7 +337,7 @@
 
         const intentionsDiv = document.getElementById('intentions');
         if (intentions.length === 0) {
-          intentionsDiv.innerHTML = '<p>No active intentions in your city</p>';
+          intentionsDiv.innerHTML = '<p style="text-align:center; color:#666; margin-top:20px;">No hay intenciones activas en tu ciudad</p>';
           return;
         }
 
@@ -187,51 +349,62 @@
 
           html += `
             <div class="intention-card">
-              <h3>Intention #${intention.id}</h3>
-              <p><strong>Check-in:</strong> ${intention.check_in} | <strong>Check-out:</strong> ${intention.check_out}</p>
-              <p><strong>Max Price:</strong> $${intention.max_price}</p>
-              <p><strong>Total Offers:</strong> ${offers.length}</p>
+              <h3>🎯 Intención #${intention.id}</h3>
+              <div class="info-grid">
+                <div><strong>📅 Check-in:</strong> ${intention.check_in}</div>
+                <div><strong>📅 Check-out:</strong> ${intention.check_out}</div>
+                <div><strong>💰 Precio máx:</strong> $${intention.max_price}</div>
+                <div><strong>📊 Total ofertas:</strong> ${offers.length}</div>
+              </div>
 
               ${myOffer ? `
                 <div class="existing-offer">
-                  <h4>Your Offer</h4>
-                  <p><strong>Price:</strong> $${myOffer.price}</p>
-                  <p><strong>Extras:</strong> ${myOffer.extras || 'None'}</p>
-                  <p><strong>Updates used:</strong> ${myOffer.updates_count} / 2</p>
+                  <h4>✅ Tu Oferta</h4>
+                  <p><strong>Precio:</strong> $${myOffer.price}</p>
+                  <p><strong>Servicios:</strong> ${myOffer.extras || 'Ninguno'}</p>
+                  <p><strong>Actualizaciones usadas:</strong> ${myOffer.updates_count} / 2</p>
                   ${myOffer.updates_count < 2 ? `
-                    <button onclick="showUpdateForm(${intention.id}, ${myOffer.id})">Update Offer</button>
+                    <button class="btn btn-primary" onclick="showUpdateForm(${intention.id}, ${myOffer.id})">✏️ Actualizar Oferta</button>
                     <div id="updateForm-${intention.id}" style="display:none;" class="offer-form">
-                      <h4>Update Offer</h4>
+                      <h4>Actualizar Oferta</h4>
                       <div class="form-group">
-                        <label>Price ($):</label>
+                        <label>💰 Precio ($):</label>
                         <input type="number" id="updatePrice-${intention.id}" value="${myOffer.price}">
-                        <small>Min: $${currentHotel.min_price}, Max: $${intention.max_price}</small>
+                        <small style="color:#666;">Mín: $${currentHotel.min_price}, Máx: $${intention.max_price}</small>
                       </div>
                       <div class="form-group">
-                        <label>Extras:</label>
-                        <textarea id="updateExtras-${intention.id}" rows="2">${myOffer.extras || ''}</textarea>
+                        <label>🎁 Servicios Adicionales:</label>
+                        <div class="checkbox-group" id="updateExtras-${intention.id}">
+                          ${generateCheckboxes(myOffer.extras, `updateExtras-${intention.id}`)}
+                        </div>
                       </div>
-                      <button onclick="updateOffer(${myOffer.id}, ${intention.id})">Save Update</button>
-                      <button class="secondary" onclick="document.getElementById('updateForm-${intention.id}').style.display='none'">Cancel</button>
+                      <div class="actions">
+                        <button class="btn btn-primary" onclick="updateOffer(${myOffer.id}, ${intention.id})">💾 Guardar</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('updateForm-${intention.id}').style.display='none'">✖️ Cancelar</button>
+                      </div>
                       <div id="updateMessage-${intention.id}"></div>
                     </div>
-                  ` : '<div class="warning">Maximum updates reached</div>'}
+                  ` : '<div class="warning">⚠️ Máximo de actualizaciones alcanzado</div>'}
                 </div>
               ` : `
-                <button onclick="showOfferForm(${intention.id})">Make Offer</button>
+                <button class="btn btn-primary" onclick="showOfferForm(${intention.id})">➕ Hacer Oferta</button>
                 <div id="offerForm-${intention.id}" style="display:none;" class="offer-form">
-                  <h4>Create Offer</h4>
+                  <h4>Crear Nueva Oferta</h4>
                   <div class="form-group">
-                    <label>Price ($):</label>
-                    <input type="number" id="price-${intention.id}" placeholder="Enter price">
-                    <small>Min: $${currentHotel.min_price}, Max: $${intention.max_price}</small>
+                    <label>💰 Precio ($):</label>
+                    <input type="number" id="price-${intention.id}" placeholder="Ingresa el precio">
+                    <small style="color:#666;">Mín: $${currentHotel.min_price}, Máx: $${intention.max_price}</small>
                   </div>
                   <div class="form-group">
-                    <label>Extras (optional):</label>
-                    <textarea id="extras-${intention.id}" rows="2" placeholder="e.g., Free breakfast, Airport shuttle"></textarea>
+                    <label>🎁 Servicios Adicionales (opcional):</label>
+                    <div class="checkbox-group" id="extras-${intention.id}">
+                      ${generateCheckboxes('', `extras-${intention.id}`)}
+                    </div>
                   </div>
-                  <button onclick="createOffer(${intention.id})">Submit Offer</button>
-                  <button class="secondary" onclick="document.getElementById('offerForm-${intention.id}').style.display='none'">Cancel</button>
+                  <div class="actions">
+                    <button class="btn btn-primary" onclick="createOffer(${intention.id})">✓ Enviar Oferta</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('offerForm-${intention.id}').style.display='none'">✖️ Cancelar</button>
+                  </div>
                   <div id="message-${intention.id}"></div>
                 </div>
               `}
@@ -244,7 +417,21 @@
       }
     }
 
-    // Load offers for an intention
+    function generateCheckboxes(selectedExtras, containerId) {
+      const selected = selectedExtras ? selectedExtras.split(', ') : [];
+      return AVAILABLE_EXTRAS.map(extra => `
+        <div class="checkbox-item">
+          <input type="checkbox" id="${containerId}-${extra.id}" value="${extra.label}" ${selected.includes(extra.label) ? 'checked' : ''}>
+          <label for="${containerId}-${extra.id}">${extra.label}</label>
+        </div>
+      `).join('');
+    }
+
+    function getSelectedExtras(containerId) {
+      const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`);
+      return Array.from(checkboxes).map(cb => cb.value).join(', ');
+    }
+
     async function loadOffersForIntention(intentionId) {
       try {
         const response = await fetch(`${API_URL}/intentions/${intentionId}/offers`);
@@ -255,24 +442,21 @@
       }
     }
 
-    // Show offer form
     function showOfferForm(intentionId) {
       document.getElementById(`offerForm-${intentionId}`).style.display = 'block';
     }
 
-    // Show update form
     function showUpdateForm(intentionId, offerId) {
       document.getElementById(`updateForm-${intentionId}`).style.display = 'block';
     }
 
-    // Create offer
     async function createOffer(intentionId) {
       const price = document.getElementById(`price-${intentionId}`).value;
-      const extras = document.getElementById(`extras-${intentionId}`).value;
+      const extras = getSelectedExtras(`extras-${intentionId}`);
       const messageDiv = document.getElementById(`message-${intentionId}`);
 
       if (!price) {
-        messageDiv.innerHTML = '<div class="error">Please enter a price</div>';
+        messageDiv.innerHTML = '<div class="message error">Por favor, ingresa un precio</div>';
         return;
       }
 
@@ -289,25 +473,24 @@
         });
 
         if (response.ok) {
-          messageDiv.innerHTML = '<div class="success">Offer created successfully!</div>';
+          messageDiv.innerHTML = '<div class="message success">¡Oferta creada exitosamente!</div>';
           setTimeout(() => loadIntentions(), 1000);
         } else {
           const error = await response.json();
-          messageDiv.innerHTML = `<div class="error">Error: ${error.error}</div>`;
+          messageDiv.innerHTML = `<div class="message error">Error: ${error.error}</div>`;
         }
       } catch (error) {
-        messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+        messageDiv.innerHTML = `<div class="message error">Error: ${error.message}</div>`;
       }
     }
 
-    // Update offer
     async function updateOffer(offerId, intentionId) {
       const price = document.getElementById(`updatePrice-${intentionId}`).value;
-      const extras = document.getElementById(`updateExtras-${intentionId}`).value;
+      const extras = getSelectedExtras(`updateExtras-${intentionId}`);
       const messageDiv = document.getElementById(`updateMessage-${intentionId}`);
 
       if (!price) {
-        messageDiv.innerHTML = '<div class="error">Please enter a price</div>';
+        messageDiv.innerHTML = '<div class="message error">Por favor, ingresa un precio</div>';
         return;
       }
 
@@ -322,18 +505,17 @@
         });
 
         if (response.ok) {
-          messageDiv.innerHTML = '<div class="success">Offer updated successfully!</div>';
+          messageDiv.innerHTML = '<div class="message success">¡Oferta actualizada exitosamente!</div>';
           setTimeout(() => loadIntentions(), 1000);
         } else {
           const error = await response.json();
-          messageDiv.innerHTML = `<div class="error">Error: ${error.error}</div>`;
+          messageDiv.innerHTML = `<div class="message error">Error: ${error.error}</div>`;
         }
       } catch (error) {
-        messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+        messageDiv.innerHTML = `<div class="message error">Error: ${error.message}</div>`;
       }
     }
 
-    // Initialize
     loadHotels();
   </script>
 </body>
