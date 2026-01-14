@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Mode</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .section {
+      margin-bottom: 40px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .intention-card {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+    .intention-card h3 {
+      margin-top: 0;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .status.active {
+      background-color: #28a745;
+      color: white;
+    }
+    .status.closed {
+      background-color: #6c757d;
+      color: white;
+    }
+    .offer {
+      background-color: #f8f9fa;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border-left: 3px solid #007bff;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>User Mode</h1>
+    <button onclick="location.href='index.html'">Back</button>
+  </header>
+
+  <div class="section">
+    <h2>Create New Intention</h2>
+    <div class="form-group">
+      <label>Select User:</label>
+      <select id="userId">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>City:</label>
+      <input type="text" id="city" placeholder="e.g., Paris">
+    </div>
+    <div class="form-group">
+      <label>Check-in Date:</label>
+      <input type="date" id="checkIn">
+    </div>
+    <div class="form-group">
+      <label>Check-out Date:</label>
+      <input type="date" id="checkOut">
+    </div>
+    <div class="form-group">
+      <label>Max Price ($):</label>
+      <input type="number" id="maxPrice" placeholder="e.g., 200">
+    </div>
+    <button onclick="createIntention()">Create Intention</button>
+    <div id="createMessage"></div>
+  </div>
+
+  <div class="section">
+    <h2>My Intentions</h2>
+    <button onclick="loadIntentions()">Refresh</button>
+    <div id="intentions"></div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+    let currentUserId = null;
+
+    // Load users on page load
+    async function loadUsers() {
+      try {
+        const response = await fetch(`${API_URL}/users`);
+        const users = await response.json();
+        const select = document.getElementById('userId');
+        select.innerHTML = users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+        if (users.length > 0) {
+          currentUserId = users[0].id;
+          loadIntentions();
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+
+    // Create intention
+    async function createIntention() {
+      const userId = document.getElementById('userId').value;
+      const city = document.getElementById('city').value;
+      const checkIn = document.getElementById('checkIn').value;
+      const checkOut = document.getElementById('checkOut').value;
+      const maxPrice = document.getElementById('maxPrice').value;
+      const messageDiv = document.getElementById('createMessage');
+
+      if (!userId || !city || !checkIn || !checkOut || !maxPrice) {
+        messageDiv.innerHTML = '<div class="error">Please fill all fields</div>';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/intentions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+            city,
+            check_in: checkIn,
+            check_out: checkOut,
+            max_price: parseInt(maxPrice)
+          })
+        });
+
+        if (response.ok) {
+          messageDiv.innerHTML = '<div class="success">Intention created successfully!</div>';
+          document.getElementById('city').value = '';
+          document.getElementById('checkIn').value = '';
+          document.getElementById('checkOut').value = '';
+          document.getElementById('maxPrice').value = '';
+          loadIntentions();
+        } else {
+          const error = await response.json();
+          messageDiv.innerHTML = `<div class="error">Error: ${error.error}</div>`;
+        }
+      } catch (error) {
+        messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+      }
+    }
+
+    // Load intentions
+    async function loadIntentions() {
+      const userId = document.getElementById('userId').value;
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`${API_URL}/intentions/user/${userId}`);
+        const intentions = await response.json();
+
+        const intentionsDiv = document.getElementById('intentions');
+        if (intentions.length === 0) {
+          intentionsDiv.innerHTML = '<p>No intentions yet</p>';
+          return;
+        }
+
+        let html = '';
+        for (const intention of intentions) {
+          const offers = await loadOffersForIntention(intention.id);
+          html += `
+            <div class="intention-card">
+              <h3>${intention.city} <span class="status ${intention.status}">${intention.status}</span></h3>
+              <p><strong>Check-in:</strong> ${intention.check_in} | <strong>Check-out:</strong> ${intention.check_out}</p>
+              <p><strong>Max Price:</strong> $${intention.max_price}</p>
+              ${offers.length > 0 ? `
+                <h4>Offers (${offers.length}):</h4>
+                ${offers.map(offer => `
+                  <div class="offer">
+                    <strong>${offer.hotel_name}</strong> - $${offer.price}
+                    ${offer.extras ? `<br>Extras: ${offer.extras}` : ''}
+                    ${intention.status === 'active' ? `<br><button onclick="selectOffer(${intention.id}, ${offer.id})">Select This Offer</button>` : ''}
+                  </div>
+                `).join('')}
+              ` : '<p>No offers yet</p>'}
+            </div>
+          `;
+        }
+        intentionsDiv.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading intentions:', error);
+      }
+    }
+
+    // Load offers for an intention
+    async function loadOffersForIntention(intentionId) {
+      try {
+        const response = await fetch(`${API_URL}/intentions/${intentionId}/offers`);
+        return await response.json();
+      } catch (error) {
+        console.error('Error loading offers:', error);
+        return [];
+      }
+    }
+
+    // Select offer and close intention
+    async function selectOffer(intentionId, offerId) {
+      if (!confirm('Are you sure you want to select this offer? This will close the intention.')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/intentions/${intentionId}/close`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ offer_id: offerId })
+        });
+
+        if (response.ok) {
+          alert('Offer selected successfully!');
+          loadIntentions();
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.error}`);
+        }
+      } catch (error) {
+        alert(`Error: ${error.message}`);
+      }
+    }
+
+    // Update current user when selection changes
+    document.getElementById('userId').addEventListener('change', function() {
+      currentUserId = this.value;
+      loadIntentions();
+    });
+
+    // Initialize
+    loadUsers();
+  </script>
+</body>
+</html>

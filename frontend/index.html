@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Marketplace</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .mode-selector {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .mode-card {
+      border: 2px solid #333;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .mode-card:hover {
+      background-color: #f0f0f0;
+    }
+    .mode-card h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hotel Marketplace MVP</h1>
+  <div class="mode-selector">
+    <div class="mode-card" onclick="location.href='user.html'">
+      <h2>User Mode</h2>
+      <p>Create intentions and receive offers</p>
+    </div>
+    <div class="mode-card" onclick="location.href='hotel.html'">
+      <h2>Hotel Mode</h2>
+      <p>View intentions and make offers</p>
+    </div>
+  </div>
+</body>
+</html>
