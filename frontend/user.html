@@ -13,7 +13,7 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1F2A44 0%, #3A4A64 100%);
       min-height: 100vh;
       padding: 20px;
     }
@@ -23,14 +23,14 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
-      background: white;
+      background: #F3EFEA;
       padding: 20px 30px;
       border-radius: 15px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
     h1 {
-      color: #667eea;
+      color: #1F2A44;
       font-size: 2rem;
     }
 
@@ -50,13 +50,13 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1F2A44 0%, #2A3A5C 100%);
       color: white;
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+      box-shadow: 0 5px 15px rgba(31,42,68,0.5);
     }
 
     .btn-secondary {
@@ -66,6 +66,18 @@
 
     .btn-secondary:hover {
       background: #5a6268;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+
+    .btn-info:hover {
+      background: #138496;
     }
 
     .btn-danger {
@@ -80,7 +92,7 @@
     }
 
     .section {
-      background: white;
+      background: #F3EFEA;
       padding: 30px;
       margin-bottom: 30px;
       border-radius: 15px;
@@ -88,14 +100,14 @@
     }
 
     .section h2 {
-      color: #667eea;
+      color: #1F2A44;
       margin-bottom: 20px;
       font-size: 1.5rem;
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
     }
 
@@ -121,16 +133,16 @@
 
     input:focus, select:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: #1F2A44;
     }
 
     .intention-card {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background: linear-gradient(135deg, #F3EFEA 0%, #E5DED5 100%);
       padding: 25px;
       margin-bottom: 20px;
       border-radius: 12px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      border-left: 5px solid #667eea;
+      border-left: 5px solid #1F2A44;
     }
 
     .intention-header {
@@ -182,7 +194,7 @@
       padding: 15px;
       margin: 15px 0;
       border-radius: 10px;
-      border-left: 4px solid #667eea;
+      border-left: 4px solid #1F2A44;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
@@ -194,7 +206,7 @@
     }
 
     .offer h4 {
-      color: #667eea;
+      color: #1F2A44;
       font-size: 1.2rem;
     }
 
@@ -232,6 +244,127 @@
       display: flex;
       gap: 10px;
       margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 50px auto;
+      padding: 0;
+      max-width: 700px;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #1F2A44 0%, #2A3A5C 100%);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 15px 15px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .close {
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+
+    .close:hover {
+      opacity: 0.8;
+    }
+
+    .modal-body {
+      padding: 30px;
+    }
+
+    .hotel-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .hotel-rating {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .stars {
+      color: #ffc107;
+    }
+
+    .hotel-detail {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .hotel-detail h3 {
+      color: #1F2A44;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .hotel-detail p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .amenities-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .amenity-badge {
+      background: #1F2A44;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
     }
 
     @media (max-width: 768px) {
@@ -243,6 +376,16 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+      }
+
+      .modal-content {
+        margin: 20px;
+        max-width: calc(100% - 40px);
+      }
+
+      .offer-header {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -279,6 +422,10 @@
           <label>💰 Precio Máximo ($):</label>
           <input type="number" id="maxPrice" placeholder="ej. 200">
         </div>
+        <div class="form-group">
+          <label>👥 Número de Huéspedes:</label>
+          <input type="number" id="guests" min="1" value="1" placeholder="ej. 2">
+        </div>
       </div>
       <button class="btn btn-primary" onclick="createIntention()">Crear Intención</button>
       <div id="createMessage"></div>
@@ -288,6 +435,19 @@
       <h2>📋 Mis Intenciones</h2>
       <button class="btn btn-primary" onclick="loadIntentions()">🔄 Actualizar</button>
       <div id="intentions"></div>
+    </div>
+  </div>
+
+  <!-- Modal para ficha del hotel -->
+  <div id="hotelModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalHotelName"></h2>
+        <button class="close" onclick="closeHotelModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalHotelContent">
+        <!-- Content will be loaded dynamically -->
+      </div>
     </div>
   </div>
 
@@ -316,9 +476,10 @@
       const checkIn = document.getElementById('checkIn').value;
       const checkOut = document.getElementById('checkOut').value;
       const maxPrice = document.getElementById('maxPrice').value;
+      const guests = document.getElementById('guests').value;
       const messageDiv = document.getElementById('createMessage');
 
-      if (!userId || !city || !checkIn || !checkOut || !maxPrice) {
+      if (!userId || !city || !checkIn || !checkOut || !maxPrice || !guests) {
         messageDiv.innerHTML = '<div class="message error">Por favor, completa todos los campos</div>';
         return;
       }
@@ -332,7 +493,8 @@
             city,
             check_in: checkIn,
             check_out: checkOut,
-            max_price: parseInt(maxPrice)
+            max_price: parseInt(maxPrice),
+            guests: parseInt(guests)
           })
         });
 
@@ -342,6 +504,7 @@
           document.getElementById('checkIn').value = '';
           document.getElementById('checkOut').value = '';
           document.getElementById('maxPrice').value = '';
+          document.getElementById('guests').value = '1';
           loadIntentions();
         } else {
           const error = await response.json();
@@ -379,6 +542,7 @@
                 <div class="info-item">📅 <strong>Check-in:</strong> ${intention.check_in}</div>
                 <div class="info-item">📅 <strong>Check-out:</strong> ${intention.check_out}</div>
                 <div class="info-item">💰 <strong>Precio máx:</strong> $${intention.max_price}</div>
+                <div class="info-item">👥 <strong>Huéspedes:</strong> ${intention.guests || 1}</div>
               </div>
               ${offers.length > 0 ? `
                 <h4 style="margin-top:20px; color:#667eea;">Ofertas Recibidas (${offers.length}):</h4>
@@ -389,9 +553,12 @@
                       <span class="price">$${offer.price}</span>
                     </div>
                     ${offer.extras ? `<div class="extras">🎁 Servicios: ${offer.extras}</div>` : ''}
-                    ${intention.status === 'active' ? `
-                      <button class="btn btn-primary" style="margin-top:10px;" onclick="selectOffer(${intention.id}, ${offer.id})">✓ Seleccionar Oferta</button>
-                    ` : ''}
+                    <div class="actions">
+                      ${intention.status === 'active' ? `
+                        <button class="btn btn-primary" onclick="selectOffer(${intention.id}, ${offer.id})">✓ Seleccionar Oferta</button>
+                      ` : ''}
+                      <button class="btn btn-info" onclick="viewHotelProfile(${offer.hotel_id})">🏨 Ver Ficha del Hotel</button>
+                    </div>
                   </div>
                 `).join('')}
               ` : '<p style="color:#666; margin-top:15px;">No hay ofertas todavía</p>'}
@@ -462,6 +629,77 @@
         }
       } catch (error) {
         alert(`Error: ${error.message}`);
+      }
+    }
+
+    async function viewHotelProfile(hotelId) {
+      try {
+        const response = await fetch(`${API_URL}/hotels/${hotelId}`);
+        const hotel = await response.json();
+
+        document.getElementById('modalHotelName').textContent = hotel.name;
+
+        const stars = '⭐'.repeat(Math.round(hotel.rating || 4));
+        const amenitiesList = hotel.amenities ? hotel.amenities.split(',').map(a => a.trim()) : [];
+
+        document.getElementById('modalHotelContent').innerHTML = `
+          <img src="${hotel.image_url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'}"
+               alt="${hotel.name}"
+               class="hotel-image"
+               onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'">
+
+          <div class="hotel-rating">
+            <span class="stars">${stars}</span>
+            <span><strong>${hotel.rating || 4.0}</strong> / 5.0</span>
+          </div>
+
+          <div class="hotel-detail">
+            <h3>📝 Descripción</h3>
+            <p>${hotel.description || 'Hotel de calidad con excelentes servicios.'}</p>
+          </div>
+
+          <div class="hotel-detail">
+            <h3>📍 Ubicación</h3>
+            <p><strong>Ciudad:</strong> ${hotel.city}</p>
+            <p><strong>Dirección:</strong> ${hotel.address || 'No disponible'}</p>
+          </div>
+
+          <div class="hotel-detail">
+            <h3>📞 Contacto</h3>
+            <p><strong>Teléfono:</strong> ${hotel.phone || 'No disponible'}</p>
+          </div>
+
+          <div class="hotel-detail">
+            <h3>💰 Precio</h3>
+            <p><strong>Precio mínimo:</strong> $${hotel.min_price} por noche</p>
+          </div>
+
+          ${amenitiesList.length > 0 ? `
+            <div class="hotel-detail">
+              <h3>✨ Servicios e Instalaciones</h3>
+              <div class="amenities-list">
+                ${amenitiesList.map(amenity => `<span class="amenity-badge">${amenity}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+        `;
+
+        document.getElementById('hotelModal').style.display = 'block';
+      } catch (error) {
+        console.error('Error loading hotel profile:', error);
+        alert('Error al cargar la información del hotel');
+      }
+    }
+
+    function closeHotelModal() {
+      document.getElementById('hotelModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('hotelModal');
+      if (event.target == modal) {
+        closeHotelModal();
       }
     }
 

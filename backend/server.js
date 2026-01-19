@@ -19,14 +19,27 @@ app.get('/api/hotels', (req, res) => {
   res.json(hotels);
 });
 
+// Get single hotel details
+app.get('/api/hotels/:hotelId', (req, res) => {
+  try {
+    const hotel = db.get('SELECT * FROM hotels WHERE id = ?', [req.params.hotelId]);
+    if (!hotel) {
+      return res.status(404).json({ error: 'Hotel not found' });
+    }
+    res.json(hotel);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Create intention
 app.post('/api/intentions', (req, res) => {
-  const { user_id, city, check_in, check_out, max_price } = req.body;
+  const { user_id, city, check_in, check_out, max_price, guests } = req.body;
 
   try {
     db.run(
-      'INSERT INTO intentions (user_id, city, check_in, check_out, max_price, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [user_id, city, check_in, check_out, max_price, 'active']
+      'INSERT INTO intentions (user_id, city, check_in, check_out, max_price, guests, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [user_id, city, check_in, check_out, max_price, guests || 1, 'active']
     );
 
     const intention = db.get('SELECT * FROM intentions WHERE id = (SELECT MAX(id) FROM intentions)');
