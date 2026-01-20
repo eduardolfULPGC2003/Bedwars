@@ -3,8 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hotel Marketplace</title>
+  <title>BedWars | Hotel Marketplace</title>
+  <!-- Brand Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    :root {
+      --color-sand: #F3EFEA;
+      --color-navy: #1F2A44;
+      --color-text: #334155;
+      --color-border: #E2E8F0;
+      --color-slate: #64748b;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,98 +25,249 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1F2A44 0%, #3A4A64 100%);
+      background-color: var(--color-sand);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--color-text);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 40px 20px;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 900px;
       width: 100%;
       text-align: center;
     }
 
-    h1 {
-      color: white;
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    /* Brand Logo Style from Poster */
+    .logo-bedwars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .word-bed { font-weight: 300; color: var(--color-slate); }
+    .word-wars { color: var(--color-navy); margin-left: 4px; }
+
+    /* Branding Symbol Logic */
+    .brand-symbol {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .bid-blade {
+      position: absolute;
+      background-color: var(--color-navy);
+      border-radius: 2px;
+    }
+    .traveler-diamond {
+      background-color: var(--color-navy);
+      transform: rotate(45deg);
+      z-index: 10;
     }
 
     .subtitle {
-      color: rgba(255,255,255,0.9);
-      font-size: 1.2rem;
-      margin-bottom: 3rem;
+      color: var(--color-slate);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 56px;
+      opacity: 0.8;
     }
 
+    /* Mode Selector Grid */
     .mode-selector {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      margin-top: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
     }
 
+    /* Block Card Styling from Poster */
     .mode-card {
-      background: #F3EFEA;
-      padding: 40px 30px;
-      border-radius: 20px;
+      background: white;
+      padding: 48px 32px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .mode-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      border-color: var(--color-navy);
+    }
+
+    /* Section Labeling (01, 02 style) */
+    .mode-label {
+      color: var(--color-navy);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0.6;
     }
 
     .mode-card h2 {
-      color: #1F2A44;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      color: var(--color-navy);
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.03em;
     }
 
     .mode-card p {
-      color: #2A3A5C;
-      font-size: 1rem;
+      color: var(--color-slate);
+      font-size: 0.95rem;
       line-height: 1.6;
+      max-width: 260px;
     }
 
-    .icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+    /* Icon Accent with Line-style */
+    .icon-wrapper {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      background: var(--color-sand);
+      transition: all 0.3s ease;
+      color: var(--color-navy);
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
-      .mode-selector {
-        grid-template-columns: 1fr;
-      }
+    .mode-card:hover .icon-wrapper {
+      background: var(--color-navy);
+      color: white;
+      border-color: var(--color-navy);
+    }
+
+    /* Brand Watermark Overlay */
+    .card-watermark {
+      position: absolute;
+      right: -15px;
+      bottom: -15px;
+      opacity: 0.03;
+      transform: scale(2.5);
+      pointer-events: none;
+    }
+
+    /* Footer Branding */
+    .footer-brand {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--color-slate);
+      letter-spacing: 0.15em;
+    }
+
+    @media (max-width: 640px) {
+      .logo-bedwars { font-size: 32px; }
+      .mode-selector { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🏨 Hotel Marketplace</h1>
-    <p class="subtitle">Conecta viajeros con hoteles de forma única</p>
-    <div class="mode-selector">
-      <div class="mode-card" onclick="location.href='user.html'">
-        <div class="icon">👤</div>
-        <h2>Modo Usuario</h2>
-        <p>Crea intenciones de viaje y recibe ofertas de hoteles</p>
+    
+    <!-- Navigation / Header -->
+    <header>
+      <div class="logo-bedwars">
+        <div class="brand-symbol w-10 h-10 mr-4">
+          <div class="bid-blade w-[4px] h-[28px] rotate-[-30deg] translate-x-[-10px]"></div>
+          <div class="traveler-diamond w-[10px] h-[10px]"></div>
+          <div class="bid-blade w-[4px] h-[28px] rotate-[30deg] translate-x-[10px]"></div>
+        </div>
+        <span class="word-bed">BED</span><span class="word-wars">WARS</span>
       </div>
+      <p class="subtitle">El Centro Enfocado en el Huésped</p>
+    </header>
+
+    <div class="mode-selector">
+      <!-- User Mode Selection -->
+      <div class="mode-card" onclick="location.href='user.html'">
+        <div class="mode-label">
+          <span class="w-1 h-1 bg-navy-900 rounded-full"></span>
+          ACCESO VIAJERO
+        </div>
+        
+        <div class="icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+
+        <h2>Modo Usuario</h2>
+        <p>Crea intenciones de viaje y recibe ofertas personalizadas de hoteles.</p>
+        
+        <div class="brand-symbol card-watermark">
+          <div class="bid-blade w-[4px] h-[28px] rotate-[-30deg] translate-x-[-10px]"></div>
+          <div class="traveler-diamond w-[10px] h-[10px]"></div>
+          <div class="bid-blade w-[4px] h-[28px] rotate-[30deg] translate-x-[10px]"></div>
+        </div>
+      </div>
+
+      <!-- Hotel Mode Selection -->
       <div class="mode-card" onclick="location.href='hotel.html'">
-        <div class="icon">🏨</div>
+        <div class="mode-label">
+          <span class="w-1 h-1 bg-navy-900 rounded-full"></span>
+          GESTIÓN HOTELERA
+        </div>
+
+        <div class="icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><path d="M9 21v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4"></path><path d="M10 9h4"></path><path d="M10 13h4"></path></svg>
+        </div>
+
         <h2>Modo Hotel</h2>
-        <p>Visualiza intenciones y haz ofertas competitivas</p>
+        <p>Visualiza la demanda en tiempo real y haz pujas competitivas para ocupar habitaciones.</p>
+
+        <div class="brand-symbol card-watermark">
+          <div class="bid-blade w-[4px] h-[28px] rotate-[-30deg] translate-x-[-10px]"></div>
+          <div class="traveler-diamond w-[10px] h-[10px]"></div>
+          <div class="bid-blade w-[4px] h-[28px] rotate-[30deg] translate-x-[10px]"></div>
+        </div>
       </div>
     </div>
+
+    <!-- Sticky Footer Brand Logic -->
+    <footer class="footer-brand">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-[#1F2A44] rounded flex items-center justify-center">
+          <div class="brand-symbol w-3 h-3">
+            <div class="traveler-diamond w-[5px] h-[5px] bg-white"></div>
+          </div>
+        </div>
+        <span class="text-navy-900">BEDWARS TECHNOLOGIES</span>
+      </div>
+      <p class="opacity-50 uppercase tracking-widest text-[8px]">Propiedad Intelectual • 2024</p>
+    </footer>
+
   </div>
 </body>
 </html>
