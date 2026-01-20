@@ -7,226 +7,180 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('frontend'));
 
-// Get all users
-app.get('/api/users', (req, res) => {
-  const users = db.all('SELECT * FROM users');
-  res.json(users);
-});
+/* ===================== USERS ===================== */
 
-// Get all hotels
-app.get('/api/hotels', (req, res) => {
-  const hotels = db.all('SELECT * FROM hotels');
-  res.json(hotels);
-});
-
-// Get single hotel details
-app.get('/api/hotels/:hotelId', (req, res) => {
+app.get('/api/users', async (req, res) => {
   try {
-    const hotel = db.get('SELECT * FROM hotels WHERE id = ?', [req.params.hotelId]);
+    const users = await db.all('SELECT * FROM users');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/* ===================== HOTELS ===================== */
+
+app.get('/api/hotels', async (req, res) => {
+  try {
+    const hotels = await db.all('SELECT * FROM hotels');
+    res.json(hotels);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/hotels/:hotelId', async (req, res) => {
+  try {
+    const hotel = await db.get(
+      'SELECT * FROM hotels WHERE id = ?',
+      [req.params.hotelId]
+    );
+
     if (!hotel) {
       return res.status(404).json({ error: 'Hotel not found' });
     }
+
     res.json(hotel);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// Create intention
-app.post('/api/intentions', (req, res) => {
+/* ===================== INTENTIONS ===================== */
+
+app.post('/api/intentions', async (req, res) => {
   const { user_id, city, check_in, check_out, max_price, guests } = req.body;
 
   try {
-    db.run(
-      'INSERT INTO intentions (user_id, city, check_in, check_out, max_price, guests, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    await db.run(
+      `INSERT INTO intentions 
+       (user_id, city, check_in, check_out, max_price, guests, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [user_id, city, check_in, check_out, max_price, guests || 1, 'active']
     );
 
-    const intention = db.get('SELECT * FROM intentions WHERE id = (SELECT MAX(id) FROM intentions)');
+    const intention = await db.get(
+      'SELECT * FROM intentions ORDER BY id DESC LIMIT 1'
+    );
+
     res.json(intention);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// Get user's intentions
-app.get('/api/intentions/user/:userId', (req, res) => {
-  const intentions = db.all('SELECT * FROM intentions WHERE user_id = ? ORDER BY id DESC', [req.params.userId]);
-  res.json(intentions);
+app.get('/api/intentions/user/:userId', async (req, res) => {
+  try {
+    const intentions = await db.all(
+      'SELECT * FROM intentions WHERE user_id = ? ORDER BY id DESC',
+      [req.params.userId]
+    );
+    res.json(intentions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Get intentions by city (for hotels)
-app.get('/api/intentions/city/:city', (req, res) => {
-  const intentions = db.all('SELECT * FROM intentions WHERE city = ? AND status = ? ORDER BY id DESC', [req.params.city, 'active']);
-  res.json(intentions);
+app.get('/api/intentions/city/:city', async (req, res) => {
+  try {
+    const intentions = await db.all(
+      'SELECT * FROM intentions WHERE city = ? AND status = ? ORDER BY id DESC',
+      [req.params.city, 'active']
+    );
+    res.json(intentions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Get offers for an intention
-app.get('/api/intentions/:intentionId/offers', (req, res) => {
-  const offers = db.all(`
-    SELECT offers.*, hotels.name as hotel_name
-    FROM offers
-    JOIN hotels ON offers.hotel_id = hotels.id
-    WHERE offers.intention_id = ?
-  `, [req.params.intentionId]);
-  res.json(offers);
+/* ===================== OFFERS ===================== */
+
+app.get('/api/intentions/:intentionId/offers', async (req, res) => {
+  try {
+    const offers = await db.all(
+      `
+      SELECT offers.*, hotels.name AS hotel_name
+      FROM offers
+      JOIN hotels ON offers.hotel_id = hotels.id
+      WHERE offers.intention_id = ?
+      `,
+      [req.params.intentionId]
+    );
+
+    res.json(offers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Create offer
-app.post('/api/offers', (req, res) => {
+app.post('/api/offers', async (req, res) => {
   const { intention_id, hotel_id, price, extras } = req.body;
 
   try {
-    // Check if intention is active
-    const intention = db.get('SELECT * FROM intentions WHERE id = ?', [intention_id]);
+    const intention = await db.get(
+      'SELECT * FROM intentions WHERE id = ?',
+      [intention_id]
+    );
+
     if (!intention || intention.status !== 'active') {
       return res.status(400).json({ error: 'Intention is not active' });
     }
 
-    // Check if hotel exists and get its details
-    const hotel = db.get('SELECT * FROM hotels WHERE id = ?', [hotel_id]);
+    const hotel = await db.get(
+      'SELECT * FROM hotels WHERE id = ?',
+      [hotel_id]
+    );
+
     if (!hotel) {
       return res.status(400).json({ error: 'Hotel not found' });
     }
 
-    // Check city match
     if (hotel.city !== intention.city) {
       return res.status(400).json({ error: 'Hotel city must match intention city' });
     }
 
-    // Check price constraints
-    if (price < hotel.min_price) {
-      return res.status(400).json({ error: `Price must be >= hotel minimum price (${hotel.min_price})` });
+    if (price < hotel.min_price || price > intention.max_price) {
+      return res.status(400).json({ error: 'Price out of allowed range' });
     }
 
-    if (price > intention.max_price) {
-      return res.status(400).json({ error: `Price must be <= intention max price (${intention.max_price})` });
-    }
-
-    // Check if hotel already has an offer for this intention
-    const existingOffer = db.get('SELECT * FROM offers WHERE intention_id = ? AND hotel_id = ?', [intention_id, hotel_id]);
-    if (existingOffer) {
-      return res.status(400).json({ error: 'Hotel already has an offer for this intention' });
-    }
-
-    db.run(
-      'INSERT INTO offers (intention_id, hotel_id, price, extras, updates_count) VALUES (?, ?, ?, ?, ?)',
-      [intention_id, hotel_id, price, extras || '', 0]
+    const existingOffer = await db.get(
+      'SELECT * FROM offers WHERE intention_id = ? AND hotel_id = ?',
+      [intention_id, hotel_id]
     );
 
-    const offer = db.get('SELECT * FROM offers WHERE id = (SELECT MAX(id) FROM offers)');
+    if (existingOffer) {
+      return res.status(400).json({ error: 'Offer already exists' });
+    }
+
+    await db.run(
+      `INSERT INTO offers 
+       (intention_id, hotel_id, price, extras, updates_count)
+       VALUES (?, ?, ?, ?, 0)`,
+      [intention_id, hotel_id, price, extras || '']
+    );
+
+    const offer = await db.get(
+      'SELECT * FROM offers ORDER BY id DESC LIMIT 1'
+    );
+
     res.json(offer);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// Update offer
-app.put('/api/offers/:offerId', (req, res) => {
-  const { price, extras } = req.body;
-
-  try {
-    const offer = db.get('SELECT * FROM offers WHERE id = ?', [req.params.offerId]);
-    if (!offer) {
-      return res.status(404).json({ error: 'Offer not found' });
-    }
-
-    // Check update limit
-    if (offer.updates_count >= 2) {
-      return res.status(400).json({ error: 'Maximum 2 updates allowed' });
-    }
-
-    // Check if intention is still active
-    const intention = db.get('SELECT * FROM intentions WHERE id = ?', [offer.intention_id]);
-    if (!intention || intention.status !== 'active') {
-      return res.status(400).json({ error: 'Intention is not active' });
-    }
-
-    // Get hotel details for validation
-    const hotel = db.get('SELECT * FROM hotels WHERE id = ?', [offer.hotel_id]);
-
-    // Check price constraints
-    if (price < hotel.min_price) {
-      return res.status(400).json({ error: `Price must be >= hotel minimum price (${hotel.min_price})` });
-    }
-
-    if (price > intention.max_price) {
-      return res.status(400).json({ error: `Price must be <= intention max price (${intention.max_price})` });
-    }
-
-    db.run(
-      'UPDATE offers SET price = ?, extras = ?, updates_count = updates_count + 1 WHERE id = ?',
-      [price, extras || '', req.params.offerId]
-    );
-
-    const updatedOffer = db.get('SELECT * FROM offers WHERE id = ?', [req.params.offerId]);
-    res.json(updatedOffer);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Close intention (select offer)
-app.post('/api/intentions/:intentionId/close', (req, res) => {
-  const { offer_id } = req.body;
-
-  try {
-    const intention = db.get('SELECT * FROM intentions WHERE id = ?', [req.params.intentionId]);
-    if (!intention) {
-      return res.status(404).json({ error: 'Intention not found' });
-    }
-
-    if (intention.status !== 'active') {
-      return res.status(400).json({ error: 'Intention is already closed' });
-    }
-
-    // Verify offer belongs to this intention
-    const offer = db.get('SELECT * FROM offers WHERE id = ? AND intention_id = ?', [offer_id, req.params.intentionId]);
-    if (!offer) {
-      return res.status(400).json({ error: 'Offer not found for this intention' });
-    }
-
-    db.run('UPDATE intentions SET status = ? WHERE id = ?', ['closed', req.params.intentionId]);
-
-    const updatedIntention = db.get('SELECT * FROM intentions WHERE id = ?', [req.params.intentionId]);
-    res.json(updatedIntention);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Delete/withdraw intention
-app.delete('/api/intentions/:intentionId', (req, res) => {
-  try {
-    const intention = db.get('SELECT * FROM intentions WHERE id = ?', [req.params.intentionId]);
-    if (!intention) {
-      return res.status(404).json({ error: 'Intention not found' });
-    }
-
-    if (intention.status !== 'active') {
-      return res.status(400).json({ error: 'Can only withdraw active intentions' });
-    }
-
-    // Delete associated offers first
-    db.run('DELETE FROM offers WHERE intention_id = ?', [req.params.intentionId]);
-
-    // Delete intention
-    db.run('DELETE FROM intentions WHERE id = ?', [req.params.intentionId]);
-
-    res.json({ message: 'Intention withdrawn successfully' });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+/* ===================== SERVER ===================== */
 
 const PORT = 3000;
 
-// Initialize database before starting server
-db.initDb().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+db.initDb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch(error => {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
   });
-}).catch(error => {
-  console.error('Failed to initialize database:', error);
-  process.exit(1);
-});
+
