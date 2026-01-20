@@ -17,17 +17,31 @@ async function initDb() {
   const SQL = await initSqlJs();
 
   // Ensure DB directory exists
-  if (!fs.existsSync(DB_DIR)) {
-    fs.mkdirSync(DB_DIR);
+  try {
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+  } catch (error) {
+    console.warn('Could not create DB directory (may be running on ephemeral filesystem):', error.message);
   }
 
-  if (fs.existsSync(DB_PATH)) {
-    const buffer = fs.readFileSync(DB_PATH);
-    db = new SQL.Database(buffer);
-    console.log('SQLite DB loaded from file');
+  // Try to load existing database
+  let dbLoaded = false;
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      const buffer = fs.readFileSync(DB_PATH);
+      db = new SQL.Database(buffer);
+      console.log('SQLite DB loaded from file');
+      await migrateDatabase();
+      dbLoaded = true;
+    }
+  } catch (error) {
+    console.warn('Could not load database from file:', error.message);
+    console.log('Creating new in-memory database...');
+  }
 
-    await migrateDatabase();
-  } else {
+  // Create new database if not loaded
+  if (!dbLoaded) {
     db = new SQL.Database();
 
     // Create tables
@@ -175,8 +189,13 @@ async function migrateDatabase() {
 
 function saveDb() {
   if (!db) return;
-  const data = db.export();
-  fs.writeFileSync(DB_PATH, Buffer.from(data));
+  try {
+    const data = db.export();
+    fs.writeFileSync(DB_PATH, Buffer.from(data));
+  } catch (error) {
+    console.warn('Could not save database to file (ephemeral filesystem):', error.message);
+    // Database remains in memory, which is fine for Render
+  }
 }
 
 function query(sql, params = []) {
