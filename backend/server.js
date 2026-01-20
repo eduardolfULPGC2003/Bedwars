@@ -93,6 +93,52 @@ app.get('/api/intentions/city/:city', async (req, res) => {
   }
 });
 
+app.post('/api/intentions/:intentionId/close', async (req, res) => {
+  try {
+    const intention = await db.get(
+      'SELECT * FROM intentions WHERE id = ?',
+      [req.params.intentionId]
+    );
+
+    if (!intention) {
+      return res.status(404).json({ error: 'Intention not found' });
+    }
+
+    if (intention.status !== 'active') {
+      return res.status(400).json({ error: 'Intention is not active' });
+    }
+
+    await db.run(
+      'UPDATE intentions SET status = ? WHERE id = ?',
+      ['closed', req.params.intentionId]
+    );
+
+    res.json({ message: 'Intention closed successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/intentions/:intentionId', async (req, res) => {
+  try {
+    const intention = await db.get(
+      'SELECT * FROM intentions WHERE id = ?',
+      [req.params.intentionId]
+    );
+
+    if (!intention) {
+      return res.status(404).json({ error: 'Intention not found' });
+    }
+
+    await db.run('DELETE FROM offers WHERE intention_id = ?', [req.params.intentionId]);
+    await db.run('DELETE FROM intentions WHERE id = ?', [req.params.intentionId]);
+
+    res.json({ message: 'Intention deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /* ===================== OFFERS ===================== */
 
 app.get('/api/intentions/:intentionId/offers', async (req, res) => {
