@@ -2,24 +2,35 @@ const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, '..', 'marketplace.db');
+/**
+ * IMPORTANT:
+ * - Do NOT write outside __dirname in Render
+ * - Ensure binary-safe writes
+ */
+
+const DB_DIR = path.join(__dirname, 'data');
+const DB_PATH = path.join(DB_DIR, 'marketplace.db');
 
 let db = null;
 
 async function initDb() {
   const SQL = await initSqlJs();
 
-  // Load existing database or create new one
+  // Ensure DB directory exists
+  if (!fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR);
+  }
+
   if (fs.existsSync(DB_PATH)) {
     const buffer = fs.readFileSync(DB_PATH);
     db = new SQL.Database(buffer);
+    console.log('SQLite DB loaded from file');
 
-    // Check if we need to migrate the database
     await migrateDatabase();
   } else {
     db = new SQL.Database();
 
-    // Create tables with new schema
+    // Create tables
     db.run(`
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,39 +87,71 @@ async function initDb() {
     db.run("INSERT INTO users (name, role) VALUES ('John Doe', 'user')");
     db.run("INSERT INTO users (name, role) VALUES ('Jane Smith', 'user')");
 
-    db.run(`INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
-            VALUES ('Grand Hotel', 'Paris', 100, 'hotel',
-            'Un elegante hotel en el corazón de París con vistas a la Torre Eiffel. Habitaciones espaciosas y servicio de primera clase.',
-            4.5, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-            'WiFi gratis, Piscina, Gimnasio, Spa, Restaurante, Bar',
-            '123 Rue de Rivoli, 75001 París, Francia',
-            '+33 1 23 45 67 89')`);
+    db.run(`
+      INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
+      VALUES (
+        'Grand Hotel',
+        'Paris',
+        100,
+        'hotel',
+        'Un elegante hotel en el corazón de París con vistas a la Torre Eiffel.',
+        4.5,
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+        'WiFi gratis, Piscina, Gimnasio, Spa, Restaurante, Bar',
+        '123 Rue de Rivoli, 75001 París, Francia',
+        '+33 1 23 45 67 89'
+      )
+    `);
 
-    db.run(`INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
-            VALUES ('Luxury Inn', 'Paris', 150, 'hotel',
-            'Hotel boutique de lujo cerca de los Campos Elíseos. Diseño moderno y atención personalizada.',
-            4.8, 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
-            'WiFi gratis, Spa, Conserjería 24h, Desayuno gourmet, Traslado aeropuerto',
-            '45 Avenue des Champs-Élysées, 75008 París, Francia',
-            '+33 1 98 76 54 32')`);
+    db.run(`
+      INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
+      VALUES (
+        'Luxury Inn',
+        'Paris',
+        150,
+        'hotel',
+        'Hotel boutique de lujo cerca de los Campos Elíseos.',
+        4.8,
+        'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
+        'WiFi gratis, Spa, Conserjería 24h',
+        '45 Avenue des Champs-Élysées, 75008 París, Francia',
+        '+33 1 98 76 54 32'
+      )
+    `);
 
-    db.run(`INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
-            VALUES ('Budget Stay', 'London', 80, 'hotel',
-            'Hotel económico pero confortable en el centro de Londres. Perfecto para viajeros con presupuesto ajustado.',
-            4.0, 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800',
-            'WiFi gratis, Desayuno incluido, Recepción 24h',
-            '78 Oxford Street, London W1D 1BS, UK',
-            '+44 20 1234 5678')`);
+    db.run(`
+      INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
+      VALUES (
+        'Budget Stay',
+        'London',
+        80,
+        'hotel',
+        'Hotel económico pero confortable en el centro de Londres.',
+        4.0,
+        'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800',
+        'WiFi gratis, Desayuno incluido, Recepción 24h',
+        '78 Oxford Street, London W1D 1BS, UK',
+        '+44 20 1234 5678'
+      )
+    `);
 
-    db.run(`INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
-            VALUES ('City Center Hotel', 'London', 120, 'hotel',
-            'Hotel moderno ubicado en pleno centro financiero de Londres. Ideal para viajes de negocios y turismo.',
-            4.3, 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
-            'WiFi gratis, Gimnasio, Centro de negocios, Restaurante, Bar',
-            '120 Baker Street, London NW1 5RT, UK',
-            '+44 20 9876 5432')`);
+    db.run(`
+      INSERT INTO hotels (name, city, min_price, role, description, rating, image_url, amenities, address, phone)
+      VALUES (
+        'City Center Hotel',
+        'London',
+        120,
+        'hotel',
+        'Hotel moderno ubicado en pleno centro financiero de Londres.',
+        4.3,
+        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
+        'WiFi gratis, Gimnasio, Centro de negocios, Restaurante, Bar',
+        '120 Baker Street, London NW1 5RT, UK',
+        '+44 20 9876 5432'
+      )
+    `);
 
-    console.log('Database created with seed data');
+    console.log('SQLite DB created with seed data');
     saveDb();
   }
 
@@ -117,39 +160,12 @@ async function initDb() {
 
 async function migrateDatabase() {
   try {
-    // Check if guests column exists in intentions table
     const intentionsInfo = db.exec("PRAGMA table_info(intentions)");
     const hasGuests = intentionsInfo[0]?.values.some(col => col[1] === 'guests');
 
     if (!hasGuests) {
-      console.log('Migrating database: adding guests column to intentions');
+      console.log('Migrating: adding guests column');
       db.run("ALTER TABLE intentions ADD COLUMN guests INTEGER DEFAULT 1");
-      saveDb();
-    }
-
-    // Check if new hotel columns exist
-    const hotelsInfo = db.exec("PRAGMA table_info(hotels)");
-    const hasDescription = hotelsInfo[0]?.values.some(col => col[1] === 'description');
-
-    if (!hasDescription) {
-      console.log('Migrating database: adding new columns to hotels');
-      db.run("ALTER TABLE hotels ADD COLUMN description TEXT");
-      db.run("ALTER TABLE hotels ADD COLUMN rating REAL DEFAULT 4.0");
-      db.run("ALTER TABLE hotels ADD COLUMN image_url TEXT");
-      db.run("ALTER TABLE hotels ADD COLUMN amenities TEXT");
-      db.run("ALTER TABLE hotels ADD COLUMN address TEXT");
-      db.run("ALTER TABLE hotels ADD COLUMN phone TEXT");
-
-      // Update existing hotels with default data
-      db.run(`UPDATE hotels SET
-        description = 'Hotel de calidad con excelentes servicios y ubicación privilegiada.',
-        rating = 4.0,
-        image_url = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-        amenities = 'WiFi gratis, Recepción 24h',
-        address = city || ', ' || name,
-        phone = '+00 000 000 0000'
-      WHERE description IS NULL`);
-
       saveDb();
     }
   } catch (error) {
@@ -158,10 +174,9 @@ async function migrateDatabase() {
 }
 
 function saveDb() {
-  if (db) {
-    const data = db.export();
-    fs.writeFileSync(DB_PATH, data);
-  }
+  if (!db) return;
+  const data = db.export();
+  fs.writeFileSync(DB_PATH, Buffer.from(data));
 }
 
 function query(sql, params = []) {
@@ -196,3 +211,4 @@ module.exports = {
   all,
   saveDb
 };
+
