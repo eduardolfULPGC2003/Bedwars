@@ -619,22 +619,56 @@
                 <div class="info-item">👥 <strong>Huéspedes:</strong> ${intention.guests || 1}</div>
               </div>
               ${offers.length > 0 ? `
-                <h4 style="margin-top:20px; color:#667eea;">Ofertas Recibidas (${offers.length}):</h4>
-                ${offers.map(offer => `
-                  <div class="offer">
-                    <div class="offer-header">
-                      <h4>${offer.hotel_name}</h4>
-                      <span class="price">$${offer.price}</span>
+                ${intention.status === 'closed' && intention.accepted_offer_id ? `
+                  <h4 style="margin-top:20px; color:#28a745;">✅ Oferta Aceptada:</h4>
+                  ${offers.filter(offer => offer.id === intention.accepted_offer_id).map(offer => `
+                    <div class="offer" style="border-left: 4px solid #28a745; background: #d4edda;">
+                      <div style="background: #28a745; color: white; padding: 8px 12px; border-radius: 4px; display: inline-block; margin-bottom: 10px; font-weight: bold; font-size: 0.9rem;">
+                        ✓ OFERTA SELECCIONADA
+                      </div>
+                      <div class="offer-header">
+                        <h4>${offer.hotel_name}</h4>
+                        <span class="price">$${offer.price}</span>
+                      </div>
+                      ${offer.extras ? `<div class="extras">🎁 Servicios: ${offer.extras}</div>` : ''}
+                      <div class="actions">
+                        <button class="btn btn-info" onclick="viewHotelProfile(${offer.hotel_id})">🏨 Ver Ficha del Hotel</button>
+                      </div>
                     </div>
-                    ${offer.extras ? `<div class="extras">🎁 Servicios: ${offer.extras}</div>` : ''}
-                    <div class="actions">
-                      ${intention.status === 'active' ? `
-                        <button class="btn btn-primary" onclick="selectOffer(${intention.id}, ${offer.id})">✓ Seleccionar Oferta</button>
-                      ` : ''}
-                      <button class="btn btn-info" onclick="viewHotelProfile(${offer.hotel_id})">🏨 Ver Ficha del Hotel</button>
+                  `).join('')}
+                  ${offers.filter(offer => offer.id !== intention.accepted_offer_id).length > 0 ? `
+                    <h4 style="margin-top:20px; color:#667eea;">Otras Ofertas Recibidas (${offers.filter(offer => offer.id !== intention.accepted_offer_id).length}):</h4>
+                    ${offers.filter(offer => offer.id !== intention.accepted_offer_id).map(offer => `
+                      <div class="offer" style="opacity: 0.6;">
+                        <div class="offer-header">
+                          <h4>${offer.hotel_name}</h4>
+                          <span class="price">$${offer.price}</span>
+                        </div>
+                        ${offer.extras ? `<div class="extras">🎁 Servicios: ${offer.extras}</div>` : ''}
+                        <div class="actions">
+                          <button class="btn btn-info" onclick="viewHotelProfile(${offer.hotel_id})">🏨 Ver Ficha del Hotel</button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  ` : ''}
+                ` : `
+                  <h4 style="margin-top:20px; color:#667eea;">Ofertas Recibidas (${offers.length}):</h4>
+                  ${offers.map(offer => `
+                    <div class="offer">
+                      <div class="offer-header">
+                        <h4>${offer.hotel_name}</h4>
+                        <span class="price">$${offer.price}</span>
+                      </div>
+                      ${offer.extras ? `<div class="extras">🎁 Servicios: ${offer.extras}</div>` : ''}
+                      <div class="actions">
+                        ${intention.status === 'active' ? `
+                          <button class="btn btn-primary" onclick="selectOffer(${intention.id}, ${offer.id})">✓ Seleccionar Oferta</button>
+                        ` : ''}
+                        <button class="btn btn-info" onclick="viewHotelProfile(${offer.hotel_id})">🏨 Ver Ficha del Hotel</button>
+                      </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `).join('')}
+                `}
               ` : '<p style="color:#666; margin-top:15px;">No hay ofertas todavía</p>'}
               ${intention.status === 'active' ? `
                 <div class="actions">
@@ -661,9 +695,6 @@
     }
 
     async function selectOffer(intentionId, offerId) {
-      if (!confirm('¿Estás seguro de que quieres seleccionar esta oferta? Esto cerrará la intención.')) {
-        return;
-      }
 
       try {
         const response = await fetch(`${API_URL}/intentions/${intentionId}/close`, {
@@ -673,7 +704,6 @@
         });
 
         if (response.ok) {
-          alert('¡Oferta seleccionada exitosamente!');
           loadIntentions();
         } else {
           const error = await response.json();

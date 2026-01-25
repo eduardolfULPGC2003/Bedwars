@@ -79,6 +79,7 @@ async function initDb() {
         max_price INTEGER NOT NULL,
         guests INTEGER DEFAULT 1,
         status TEXT NOT NULL DEFAULT 'active',
+        accepted_offer_id INTEGER DEFAULT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       )
     `);
@@ -176,10 +177,17 @@ async function migrateDatabase() {
   try {
     const intentionsInfo = db.exec("PRAGMA table_info(intentions)");
     const hasGuests = intentionsInfo[0]?.values.some(col => col[1] === 'guests');
+    const hasAcceptedOfferId = intentionsInfo[0]?.values.some(col => col[1] === 'accepted_offer_id');
 
     if (!hasGuests) {
       console.log('Migrating: adding guests column');
       db.run("ALTER TABLE intentions ADD COLUMN guests INTEGER DEFAULT 1");
+      saveDb();
+    }
+
+    if (!hasAcceptedOfferId) {
+      console.log('Migrating: adding accepted_offer_id column');
+      db.run("ALTER TABLE intentions ADD COLUMN accepted_offer_id INTEGER DEFAULT NULL");
       saveDb();
     }
   } catch (error) {

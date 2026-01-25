@@ -95,6 +95,8 @@ app.get('/api/intentions/city/:city', async (req, res) => {
 
 app.post('/api/intentions/:intentionId/close', async (req, res) => {
   try {
+    const { offer_id } = req.body;
+
     const intention = await db.get(
       'SELECT * FROM intentions WHERE id = ?',
       [req.params.intentionId]
@@ -108,10 +110,26 @@ app.post('/api/intentions/:intentionId/close', async (req, res) => {
       return res.status(400).json({ error: 'Intention is not active' });
     }
 
-    await db.run(
-      'UPDATE intentions SET status = ? WHERE id = ?',
-      ['closed', req.params.intentionId]
-    );
+    if (offer_id) {
+      const offer = await db.get(
+        'SELECT * FROM offers WHERE id = ? AND intention_id = ?',
+        [offer_id, req.params.intentionId]
+      );
+
+      if (!offer) {
+        return res.status(400).json({ error: 'Offer not found for this intention' });
+      }
+
+      await db.run(
+        'UPDATE intentions SET status = ?, accepted_offer_id = ? WHERE id = ?',
+        ['closed', offer_id, req.params.intentionId]
+      );
+    } else {
+      await db.run(
+        'UPDATE intentions SET status = ? WHERE id = ?',
+        ['closed', req.params.intentionId]
+      );
+    }
 
     res.json({ message: 'Intention closed successfully' });
   } catch (error) {
